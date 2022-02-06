@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import "react-native-gesture-handler";
+import MainNavigation from "./navigation";
+import { Provider as ReduxProvider } from "react-redux";
+import { Provider as PaperProvider } from "react-native-paper";
+import { store } from "./features/store";
+import AppLoading from "expo-app-loading";
+import { useFonts } from "expo-font";
+import { useState } from "react";
+import { darkTheme, theme } from "./theme";
 
-export default function App() {
+const App = () => {
+  const [isDark, setIsDark] = useState(true);
+
+  let [fontsLoaded] = useFonts({
+    "Oswald-Regular": require("./assets/Oswald-Regular.ttf"),
+    "Oswald-Medium": require("./assets/Oswald-Medium.ttf"),
+    "Oswald-Light": require("./assets/Oswald-Light.ttf"),
+    "Oswald-Thin": require("./assets/Oswald-ExtraLight.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <ReduxProvider store={store}>
+        <PaperProvider theme={isDark ? darkTheme : theme}>
+          <MainNavigation />
+        </PaperProvider>
+      </ReduxProvider>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
